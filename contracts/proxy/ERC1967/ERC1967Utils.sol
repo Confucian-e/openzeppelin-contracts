@@ -41,6 +41,11 @@ library ERC1967Utils {
     error ERC1967NonPayable();
 
     /**
+     * @dev The new implementation is the same as the old implementation.
+     */
+    error ERC1967SameImplementation();
+
+    /**
      * @dev Returns the current implementation address.
      */
     function getImplementation() internal view returns (address) {
@@ -53,6 +58,9 @@ library ERC1967Utils {
     function _setImplementation(address newImplementation) private {
         if (newImplementation.code.length == 0) {
             revert ERC1967InvalidImplementation(newImplementation);
+        }
+        if (getImplementation() == newImplementation) {
+            revert ERC1967SameImplementation();
         }
         StorageSlot.getAddressSlot(IMPLEMENTATION_SLOT).value = newImplementation;
     }
